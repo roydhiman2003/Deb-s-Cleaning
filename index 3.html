@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Deb's Cleaning Schedule</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1c2430;--mu:#6b7684;--ac:#0e8a7d;--bd:#e3e7ec;--bad:#d64545;--ok:#2f9e5b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161b;--card:#1b2129;--tx:#e8edf2;--mu:#98a3b0;--bd:#2c3540;--ac:#33b5a6}}
+:root[data-theme="dark"]{--bg:#12161b;--card:#1b2129;--tx:#e8edf2;--mu:#98a3b0;--bd:#2c3540;--ac:#33b5a6}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,Segoe UI,sans-serif}
+.w{max-width:640px;margin:0 auto;padding:12px 12px 90px}
+h1{font-size:19px;margin:4px 0 8px}
+.row{display:flex;gap:8px;align-items:center}.sp{justify-content:space-between}
+button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:7px 11px;cursor:pointer}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff}
+button.s{padding:5px 9px;font-size:13px}
+.days{display:flex;gap:6px;overflow-x:auto;padding:8px 0}
+.d{flex:1 0 auto;min-width:52px;text-align:center;padding:7px 4px;position:relative}
+.d.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.d small{display:block;opacity:.8}
+.dot{position:absolute;top:3px;right:5px;color:var(--bad);font-weight:700}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin:8px 0}
+.c.bad{border-color:var(--bad)}
+.t{font-weight:700}.m{color:var(--mu);font-size:13px}
+.b{display:inline-block;border-radius:20px;padding:1px 8px;font-size:12px;border:1px solid var(--bd)}
+.warn{background:var(--card);border:1px solid var(--bad);color:var(--bad);border-radius:12px;padding:8px 12px;margin:8px 0;font-size:14px}
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 3px 10px #0004;padding:12px 18px;border-radius:30px}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);width:min(92vw,440px);padding:14px}
+dialog::backdrop{background:#0006}
+label{display:block;font-size:13px;color:var(--mu);margin:8px 0 2px}
+input,select,textarea{width:100%;box-sizing:border-box;font:inherit;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+.wd{display:flex;gap:4px;flex-wrap:wrap}.wd label{display:flex;align-items:center;gap:3px;margin:0;color:var(--tx)}.wd input{width:auto}
+body{font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif}
+.hd{display:flex;align-items:center;gap:12px;background:#0b5f57;color:#fff;margin:0 -12px 12px;padding:16px 14px}
+.lg{width:40px;height:40px;border-radius:10px;background:#fff;color:#0b5f57;display:grid;place-items:center;font-weight:800}
+.hn{font-size:18px;font-weight:700}.hs{font-size:12px;opacity:.8}
+.hd button{margin-left:auto;background:#ffffff22;border-color:#ffffff44;color:#fff}
+.stats{display:flex;gap:10px;margin:10px 0}
+.st{flex:1;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+.st span{display:block;font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}.st b{font-size:20px}
+.c{border-left:4px solid var(--ac);box-shadow:0 1px 2px #0000000d}.c.fl{border-left-color:#94a3b8}.c.bad{border-left-color:var(--bad)}
+.b{font-size:11px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;border-color:transparent}
+.b.f{background:#0e8a7d1f;color:var(--ac)}.b.a{background:#94a3b833;color:var(--mu)}
+.dh{font-weight:700;font-size:16px;margin:14px 0 4px}
+.d{border-radius:12px}.d.on{box-shadow:0 2px 6px #0e8a7d55}
+button.p{font-weight:600}
+.tabs{display:flex;gap:6px;margin-bottom:6px}.tabs button{flex:1;font-weight:600}
+</style></head><body><div class="w">
+<header class="hd"><div class="lg">DC</div><div><div class="hn">Deb's Cleaning</div><div class="hs">Schedule &amp; bookings</div></div><button class="s" onclick="bankDlg()">Bank details</button></header>
+<div class="tabs"><button id="ts" class="p" onclick="tab('s')">Schedule</button><button id="tc" onclick="tab('c')">Customers</button><button id="tm" onclick="tab('m')">Money</button></div>
+<div id="vs"><div id="tw"></div><div class="row sp"><button onclick="nav(-7)">‹</button><b id="wk"></b><button onclick="nav(7)">›</button></div>
+<div class="stats" id="tot"></div><div id="warn"></div><div class="days" id="days"></div><div id="list"></div></div>
+<div id="vc" hidden><input id="cq" placeholder="Search name, phone or address" oninput="cust()" style="margin:10px 0"><div class="m" id="cn"></div><div id="cl"></div></div>
+<div id="vm" hidden></div>
+
+</div>
+<button class="p fab" id="fab" onclick="edit()">+ Add job</button>
+<dialog id="dlg"></dialog>
+<script>
+const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0'),BUF=30;
+const ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const pd=s=>{const[a,b,c]=s.split('-');return new Date(+a,b-1,+c)};
+const mon=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));x.setHours(0,0,0,0);return x};
+const tm=m=>{const h=Math.floor(m/60),n=m%60;return(h%12||12)+(n?':'+pad(n):'')+(h<12?'am':'pm')};
+const hm=s=>{const[a,b]=s.split(':');return+a*60+ +b};
+const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let n=0;const uid=()=>'j'+(++n);
+const D=(date,name,start,x)=>({id:uid(),name,date,start:start||'',dur:60,loc:'',amt:'',pay:'cash',phone:'',...x});
+const W=(name,days,dur,start)=>({id:uid(),name,days,pick:true,start:start||'',dur,loc:name,amt:'',pay:'cash',phone:''});
+function seed(){return{bank:'',paid:{},jobs:[
+D('2026-10-16','Dibali di','15:00'),
+D('2026-10-26','Priyanka'),D('2026-10-27','Reena'),D('2026-10-28','Abha'),D('2026-10-28','Reena'),D('2026-10-30','Clinic'),
+D('2026-10-31','Sneha di','10:30'),D('2026-10-31','Reena ma','15:00'),D('2026-11-01','Sapana','09:00'),D('2026-11-01','Reena','12:30'),
+D('2026-11-02','Priyanka'),D('2026-11-03','Sapana'),D('2026-11-03','Reena'),D('2026-11-03','Sneha'),D('2026-11-04','Abha'),
+D('2026-11-05','Jaimini'),D('2026-11-05','Dibali (new customer)'),D('2026-11-05','Sanjay'),D('2026-11-05','Tarik binte di','14:00'),
+D('2026-11-06','Venkat'),D('2026-11-06','Dibali di'),D('2026-11-06','Clinic'),D('2026-11-07','Priyanka',0,{loc:'Aragon'}),
+W('Tarneit Station',[1,3],150),W('Wyndham Vale Station',[1,3,5],120),W('North Melbourne Station',[6,0],240),
+W('Deer Park Station',[6,0],120,'10:00'),W('South Dynon Station',[0],60,'15:00')]}}
+let S;try{S=JSON.parse(localStorage.getItem('deb1'))}catch(e){}
+if(!S||!S.jobs)S=seed();
+if(!S.v2){S.jobs.forEach(j=>{if(j.days&&/Station/.test(j.name))j.pick=true;else if(j.dur===120)j.dur=60});S.v2=1}
+if(!S.v3){S.jobs.forEach(j=>{if(j.date&&j.date>='2026-10-26'&&j.date<='2026-11-08'&&j.date!=='2026-11-03'&&j.name!=='Tarik binte di')j.rep=14});S.v3=1}
+if(!S.exp)S.exp=[{id:'e1',name:'House rent',amt:190,date:'2026-10-21',rep:14},{id:'e2',name:'Car rent',amt:250,date:'2026-10-21',rep:14}];
+if(!S.v4){S.exp.forEach(e=>{if(e.id==='e1'||e.id==='e2')e.date='2026-10-21'});S.v4=1}
+S.jobs.forEach(j=>{const k=+j.id.slice(1);if(k>n)n=k});
+const save=()=>{try{localStorage.setItem('deb1',JSON.stringify(S))}catch(e){}};
+let wk=mon(new Date()),sel=ds(new Date());
+function nav(k){wk.setDate(wk.getDate()+k);sel=ds(wk);render()}
+function layout(d,x){
+ const k=ds(d),oc=S.jobs.filter(j=>j.date===k||(j.rep&&j.date&&Math.round((d-pd(j.date))/864e5)%j.rep===0)||(j.days&&!j.pick&&j.days.includes(d.getDay()))||(j.pick&&(AS[j.id]===k||j===x)));
+ const fx=oc.filter(j=>j.start).map(j=>({j,s:hm(j.start),e:hm(j.start)+j.dur})).sort((a,b)=>a.s-b.s);
+ fx.forEach((a,i)=>fx.forEach((b,m)=>{if(i!=m&&a.s<b.e&&b.s<a.e){a.bad=1;(a.w=a.w||[]).push(b.j.name)}}));
+ const pl=fx.slice(),out=fx.slice();
+ oc.filter(j=>!j.start).forEach(j=>{let s=420,c;while(s<1500&&(c=pl.find(p=>s<p.e+BUF&&s+j.dur>p.s-BUF)))s=c.e+BUF;
+  const r={j,s,e:s+j.dur,flex:1};const lim=j.pick?1260:1140;if(r.e>lim){r.bad=1;r.w=['no free time before '+(lim==1140?'7pm':'9pm')]}pl.push(r);out.push(r)});
+ return out.sort((a,b)=>a.s-b.s)}
+let AS={};
+function assign(days){AS={};
+ S.jobs.filter(j=>j.pick).sort((a,b)=>(b.start?1:0)-(a.start?1:0)).forEach(j=>{let best;
+  j.days.forEach(wd=>{const d=days.find(z=>z.getDay()===wd);if(!d)return;
+   const L=layout(d,j),r=L.find(z=>z.j===j),sc=(r.bad?1000:0)+L.length;
+   if(!best||sc<best.sc)best={k:ds(d),sc}});
+  if(best)AS[j.id]=best.k})}
+const money=x=>x===''||x==null?0:+x||0;
+function render(){
+ const days=[...Array(7)].map((_,i)=>{const d=new Date(wk);d.setDate(d.getDate()+i);return d});
+ $('#wk').textContent=days[0].getDate()+' '+days[0].toLocaleString('en',{month:'short'})+' – '+days[6].getDate()+' '+days[6].toLocaleString('en',{month:'short'});
+ assign(days);if(!days.some(d=>ds(d)===sel))sel=ds(days[0]);
+ let warn='',tot=0,due=0;
+ $('#days').innerHTML=days.map(d=>{const L=layout(d),bad=L.some(r=>r.bad);
+  L.forEach(r=>{const a=money(r.j.amt);tot+=a;if(!S.paid[r.j.id+'|'+ds(d)])due+=a;
+   if(r.bad)warn+=`<div>${DN[d.getDay()]}: <b>${r.j.name}</b> ${r.w.join(', ')?'clashes with '+r.w.join(', '):''}</div>`});
+  return`<button class="d ${ds(d)===sel?'on':''}" onclick="sel='${ds(d)}';render()">${bad?'<span class="dot">!</span>':''}${DN[d.getDay()]}<small>${d.getDate()} · ${L.length}</small></button>`}).join('');
+ $('#warn').innerHTML=warn?`<div class="warn"><b>Clashes this week</b>${warn}</div>`:'';
+ const d=pd(sel),L=layout(d);
+ $('#list').innerHTML=`<div class="dh">${d.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'})}</div>`+(L.length?'':'<div class="m">No jobs this day.</div>')+L.map(r=>{const j=r.j,k=j.id+'|'+sel,p=S.paid[k];
+  return`<div class="c ${r.flex?'fl':'fx'} ${r.bad?'bad':''}"><div class="row sp"><span class="t">${tm(r.s)} – ${tm(r.e)} ${r.flex?'<span class="b a">Auto time</span>':'<span class="b f">Fixed time</span>'}</span>
+  <span class="t">${money(j.amt)?'$'+money(j.amt):'$ ?'}</span></div>
+  <div class="t">${j.name}</div><div class="m">${j.loc||'No address yet'} · ${j.pay==='bank'?'Bank':'Cash'} ${j.phone?'· '+j.phone:''}</div>
+  ${j.note?`<div class="m">${j.note}</div>`:''}${r.bad?`<div style="color:var(--bad);font-size:13px">⚠ Clash: ${r.w.join(', ')}</div>`:''}
+  <div class="row" style="margin-top:8px;flex-wrap:wrap"><button class="s ${p?'p':''}" onclick="paid('${k}')">${p?'✓ Paid':'Mark paid'}</button>
+  <button class="s" onclick="remind('${j.id}',${r.s})">Reminder</button>
+  <button class="s" onclick="window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent('${(j.loc||j.name).replace(/'/g,'')}'),'_blank')">Map</button>
+  <button class="s" onclick="edit('${j.id}')">Edit</button></div></div>`}).join('');
+ $('#tot').innerHTML=`<div class="st"><span>Week total</span><b>$${tot}</b></div><div class="st"><span>Not paid</span><b>$${due}</b></div>`;tmrw();if(V==='c')cust()}
+function paid(k){S.paid[k]=!S.paid[k];save();render()}
+let V='s',MP='m';
+function tmrw(){const t=T0();t.setDate(t.getDate()+1);
+ const keep=AS,days=[...Array(7)].map((_,i)=>{const d=mon(t);d.setDate(d.getDate()+i);return d});
+ assign(days);const L=layout(t);AS=keep;
+ const cl=L.filter(r=>!r.j.pick),st=L.filter(r=>r.j.pick),a0=300,a1=1140,free=[];let cur=a0,more=0,tot=0;
+ cl.forEach(r=>{if(r.s>cur)free.push([cur,r.s]);cur=Math.max(cur,r.e)});
+ if(cur<a1)free.push([cur,a1]);
+ const fr=free.filter(g=>g[1]-g[0]>=30);
+ fr.forEach(g=>{tot+=g[1]-g[0];more+=Math.max(0,Math.floor((g[1]-g[0]-(g[0]>a0?BUF:0)-(g[1]<a1?BUF:0))/60))});
+ const hh=m=>Math.floor(m/60)+'h'+(m%60?' '+m%60+'m':'');
+ $('#tw').innerHTML=`<div class="c fx"><div class="row sp"><span class="t">Tomorrow · ${fd(t)}</span><span class="b f">${cl.length} client${cl.length==1?'':'s'}</span></div>
+ <div class="m" style="margin-top:6px">${cl.map(r=>tm(r.s)+'-'+tm(r.e)+' '+r.j.name).join(' · ')||'No clients'}</div>
+ <div class="m"><b>Free time (5am-7pm, clients only):</b> ${fr.map(g=>tm(g[0])+'-'+tm(g[1])).join(', ')||'None'}</div>
+ <div class="m">${hh(tot)} free · room for about ${more} more 1-hour job${more==1?'':'s'}</div>
+ <div class="m">Station jobs (separate): ${st.map(r=>r.j.name.replace(' Station','')+' '+tm(r.s)+'-'+tm(r.e)).join(', ')||'none'}</div></div>`}
+const T0=()=>{const x=new Date();x.setHours(0,0,0,0);return x},fd=d=>d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+function tab(v){V=v;['s','c','m'].forEach(k=>{$('#v'+k).hidden=k!==v;$('#t'+k).classList.toggle('p',k===v)});$('#fab').hidden=v==='m';if(v==='c')cust();if(v==='m')mv()}
+const pc=id=>Object.keys(S.paid).filter(k=>S.paid[k]&&k.startsWith(id+'|')).length;
+const sch=j=>{const t=j.start?tm(hm(j.start)):'auto time',dn=j.days?j.days.map(i=>DN[i]).join('/'):'',dt=j.date?fd(pd(j.date)):'';
+ return(j.pick?'Once a week on '+dn:j.days?'Every week '+dn:j.rep?'Every 2 weeks, '+dt:'One day, '+dt)+' · '+t+' · '+(j.dur/60)+'h'};
+function cust(){const q=$('#cq').value.toLowerCase(),L=S.jobs.filter(j=>(j.name+' '+(j.loc||'')+' '+(j.phone||'')).toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+ $('#cn').textContent=L.length+' customers';
+ $('#cl').innerHTML=L.map(j=>`<div class="c fx" onclick="edit('${j.id}')"><div class="row sp"><span class="t">${j.name}</span><span class="t">${money(j.amt)?'$'+money(j.amt):'$ ?'}</span></div>
+ <div class="m">${sch(j)}</div><div class="m">Phone: ${j.phone||'-'} · Address: ${j.loc||'-'}</div>
+ <div class="m">Pays by ${j.pay==='bank'?'bank':'cash'} · Paid jobs: ${pc(j.id)} · Earned: $${pc(j.id)*money(j.amt)}</div>${j.note?`<div class="m">Note: ${j.note}</div>`:''}</div>`).join('')}
+function xs(e,a,b){if(!e.rep){const d=pd(e.date);return d>=a&&d<=b?e.amt:0}let c=0;for(let d=pd(e.date);d<=b;d.setDate(d.getDate()+e.rep))if(d>=a)c++;return c*e.amt}
+function xdel(id){if(confirm('Delete this expense?')){S.exp=S.exp.filter(e=>e.id!==id);save();mv()}}
+function xadd(){const a=+$('#xa').value;if(!a||!$('#xdt').value)return alert('Enter amount and date.');
+ S.exp.push({id:'e'+Date.now(),name:$('#xn').value||'Expense',amt:a,date:$('#xdt').value,rep:+$('#xr').value});save();mv()}
+function mv(){const t=T0(),a=MP==='m'?new Date(t.getFullYear(),t.getMonth(),1):new Date(2000,0,1);let ear=0,cash=0,bank=0,exp=0;
+ Object.keys(S.paid).forEach(k=>{if(!S.paid[k])return;const[id,dt]=k.split('|'),j=S.jobs.find(x=>x.id===id),d=pd(dt);if(!j||d<a||d>t)return;const v=money(j.amt);ear+=v;j.pay==='bank'?bank+=v:cash+=v});
+ S.exp.forEach(e=>exp+=xs(e,a,t));const by={};S.exp.forEach(e=>{const v=xs(e,a,t);if(v)by[e.name]=(by[e.name]||0)+v});
+ const st=(k,v,c)=>`<div class="st"><span>${k}</span><b${c?` style="color:${c}"`:''}>$${v}</b></div>`;
+ $('#vm').innerHTML=`<div class="row" style="margin:10px 0"><button class="s ${MP==='m'?'p':''}" onclick="MP='m';mv()">This month so far</button><button class="s ${MP==='a'?'p':''}" onclick="MP='a';mv()">All time</button></div>
+ <div class="stats">${st('Earnings',ear)}${st('Expenses',exp)}${st('Profit',ear-exp,ear-exp<0?'var(--bad)':'var(--ok)')}</div>
+ <div class="m">Cash $${cash} · Bank $${bank} (jobs marked Paid)</div><div class="m">Spent on: ${Object.entries(by).map(([k,v])=>k+' $'+v).join(' · ')||'nothing yet'}</div><div class="dh">Expenses</div>`+
+ S.exp.map(e=>{let w;if(e.rep){let d=pd(e.date);while(d<t)d.setDate(d.getDate()+e.rep);w='Every 2 weeks · next '+fd(d)}else w=fd(pd(e.date));
+  return`<div class="c fx"><div class="row sp"><span class="t">${e.name}</span><span class="t">$${e.amt}</span></div><div class="row sp"><span class="m">${w}</span><button class="s" onclick="xdel('${e.id}')">Delete</button></div></div>`}).join('')+
+ `<div class="c"><b>Add expense</b><label>Name</label><input id="xn" list="xl" placeholder="Fuel, Cleaning supplies, Groceries..."><datalist id="xl"><option value="Fuel"><option value="Cleaning supplies"><option value="Groceries"><option value="House rent"><option value="Car rent"></datalist>
+ <div class="row" style="flex-wrap:wrap;margin-top:6px">${['Fuel','Cleaning supplies','Groceries','Other'].map(x=>`<button class="s" onclick="$('#xn').value='${x}'">${x}</button>`).join('')}</div>
+ <div class="row"><div style="flex:1"><label>Amount ($)</label><input id="xa" type="number"></div><div style="flex:1"><label>Date</label><input id="xdt" type="date" value="${ds(t)}"></div></div>
+ <label>Repeat</label><select id="xr"><option value="0">One time</option><option value="14">Every 2 weeks</option></select>
+ <button class="p" style="margin-top:10px" onclick="xadd()">Add</button></div>`}
+function msg(j,s){const d=pd(sel);
+ return`Hi ${j.name}, this is Deb's Cleaning. Reminder: your cleaning is on ${DN[d.getDay()]} ${d.getDate()} ${d.toLocaleString('en',{month:'short'})} at ${tm(s)}${j.loc?' at '+j.loc:''}.`+
+ (money(j.amt)?` Amount: $${money(j.amt)}, paid by ${j.pay==='bank'?'bank transfer'+(S.bank?' ('+S.bank+')':''):'cash'}.`:'')+' Thank you!'}
+function remind(id,s){const j=S.jobs.find(x=>x.id===id),t=msg(j,s),ph=(j.phone||'').replace(/[^\d+]/g,'');
+ $('#dlg').innerHTML=`<b>Reminder message</b><textarea id="mt" rows="6" style="margin-top:8px">${t}</textarea>
+ <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="p" onclick="cp()">Copy</button>
+ <button onclick="location.href='sms:${ph}?body='+encodeURIComponent($('#mt').value)">SMS</button>
+ <button onclick="window.open('https://wa.me/${ph.replace('+','')}?text='+encodeURIComponent($('#mt').value),'_blank')">WhatsApp</button>
+ <button onclick="$('#dlg').close()">Close</button></div>`;$('#dlg').showModal()}
+function cp(){const t=$('#mt');t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}}
+function bankDlg(){$('#dlg').innerHTML=`<b>Bank details</b><div class="m">Added to reminders for bank customers.</div>
+ <input id="bk" placeholder="e.g. BSB 000-000, Acc 12345678" value="${S.bank}" style="margin-top:8px">
+ <div class="row" style="margin-top:10px"><button class="p" onclick="S.bank=$('#bk').value;save();$('#dlg').close()">Save</button><button onclick="$('#dlg').close()">Close</button></div>`;$('#dlg').showModal()}
+function edit(id){const j=S.jobs.find(x=>x.id===id)||{name:'',date:sel,start:'',dur:60,loc:'',amt:'',pay:'cash',phone:'',note:''};
+ const wk7=j.days||[],wd=[1,2,3,4,5,6,0].map(i=>`<label><input type="checkbox" class="wdc" value="${i}" ${wk7.includes(i)?'checked':''}>${DN[i]}</label>`).join('');
+ $('#dlg').innerHTML=`<b>${id?'Edit':'New'} job</b>
+ <label>Customer name</label><input id="f1" value="${j.name}">
+ <label>Phone (for reminders)</label><input id="f2" type="tel" value="${j.phone||''}">
+ <label>How often</label><select id="f3" onchange="tg()"><option value="o" ${j.days||j.rep?'':'selected'}>One day</option><option value="f" ${j.rep?'selected':''}>Every 2 weeks, same day</option><option value="w" ${j.days&&!j.pick?'selected':''}>Every week, all days I pick</option><option value="p" ${j.pick?'selected':''}>Once a week, on any day I pick</option></select>
+ <div id="fd"><label>Date</label><input id="f4" type="date" value="${j.date||sel}"></div><div id="fw" class="wd" style="display:none">${wd}</div>
+ <div class="row"><div style="flex:1"><label>Start time (empty = auto-fit)</label><input id="f5" type="time" value="${j.start}"></div>
+ <div style="flex:1"><label>Hours</label><input id="f6" type="number" step="0.25" min="0.25" value="${j.dur/60}"></div></div>
+ <label>Location / address</label><input id="f7" value="${j.loc||''}">
+ <div class="row"><div style="flex:1"><label>Amount ($)</label><input id="f8" type="number" value="${j.amt}"></div>
+ <div style="flex:1"><label>Pays by</label><select id="f9"><option value="cash" ${j.pay==='cash'?'selected':''}>Cash</option><option value="bank" ${j.pay==='bank'?'selected':''}>Bank</option></select></div></div>
+ <label>Note</label><input id="f10" value="${j.note||''}">
+ <div class="row" style="margin-top:12px"><button class="p" onclick="sv('${id||''}')">Save</button><button onclick="$('#dlg').close()">Cancel</button>${id?`<button style="margin-left:auto;color:var(--bad)" onclick="del('${id}')">Delete</button>`:''}</div>`;
+ $('#dlg').showModal();tg()}
+function tg(){const v=$('#f3').value,w=v==='w'||v==='p';$('#fd').style.display=w?'none':'';$('#fw').style.display=w?'flex':'none'}
+function sv(id){const t=$('#f3').value,w=t==='w'||t==='p',o={name:$('#f1').value||'Customer',phone:$('#f2').value,start:$('#f5').value,dur:Math.round((+$('#f6').value||2)*60),
+ loc:$('#f7').value,amt:$('#f8').value,pay:$('#f9').value,note:$('#f10').value};
+ o.pick=t==='p';o.rep=t==='f'?14:0;if(w){o.days=[...document.querySelectorAll('.wdc:checked')].map(x=>+x.value);if(!o.days.length)return alert('Pick at least one day.')}else{o.date=$('#f4').value;if(!o.date)return alert('Pick a date.')}
+ if(id){const i=S.jobs.findIndex(x=>x.id===id),old=S.jobs[i];delete old.days;delete old.date;S.jobs[i]={...old,...o}}else S.jobs.push({id:uid(),...o});
+ if(o.date)sel=o.date,wk=mon(pd(o.date));save();$('#dlg').close();render()}
+function del(id){if(confirm('Delete this job?')){S.jobs=S.jobs.filter(x=>x.id!==id);save();$('#dlg').close();render()}}
+render();
+</script></body></html>
